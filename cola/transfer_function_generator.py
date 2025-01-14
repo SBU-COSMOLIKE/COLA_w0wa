@@ -202,17 +202,17 @@ if __name__ == "__main__":
         print(f"Reading LHS file in {args.input}")
         lhs = np.loadtxt(args.input)
         for i, cosmo in enumerate(lhs):
-            if i < args.start or i > args.end: 
-                print(f"Skipping cosmology {i}...")
-                print("-----")
-                continue
+            # if i < args.start or i > args.end: 
+            #     print(f"Skipping cosmology {i}...")
+            #     print("-----")
+            #     continue
             print("-----")
             try:
-                h, Omega_b, Omega_m, As, ns, w, w0pwa = cosmo
+                h, Omega_b, Omega_m, As, ns, w, wa = cosmo
             except ValueError:
                 Omega_m, Omega_b, ns, As, h, w = cosmo
                 w0pwa = w
-            wa = w0pwa - w
+            # wa = w0pwa - w
             print(f'Running cosmology #{i}: Om={Omega_m}, Ob={Omega_b}, ns={ns}, As={As}, h={h}, w0={w}, wa={wa}')
             os.mkdir(f"{args.path_to_save}/{i}")
             start = time.perf_counter()

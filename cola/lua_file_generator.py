@@ -6,9 +6,9 @@ argp = argparse.ArgumentParser(
     description="Generates lua input files for COLA simulations",
 )
 argp.add_argument("--path_to_save", help="Path to save the files.", required=True)
+argp.add_argument("--precision", help="Simulation precision, controls the size of the box, number of particles and size of mesh grid. Supported values are 'default' and 'high'.", required=True, choices=["default", "high"])
 argp.add_argument("--input", help="File to read LHS. If not provided, generates lua files for the EE2 reference cosmology.")
-argp.add_argument("--precision", help="Simulation precision, controls the size of the box, number of particles and size of mesh grid. Supported values are 'default' and 'high'.", required=True)
-argp.add_argument("--phase", help="Whether to reverse the phase of initial conditions in this batch. Supported values are 'a' and 'b'.", required=True)
+argp.add_argument("--phase", help="Whether to reverse the phase of initial conditions in this batch. Supported values are 'a' and 'b'.", required=True, choices=["a", "b"])
 
 z_ini = 19.0
 m_nu = 0.058
@@ -24,17 +24,11 @@ if __name__ == "__main__":
         force_nmesh = 3072
         box_size = 512
         prec_suffix = '2'
-    else:
-        print(f"ERROR: invalid precision {args.precision}")
-        exit(1)
 
     if args.phase == 'a':
         rev_phase = 'false'
     elif args.phase == 'b':
         rev_phase = 'true'
-    else:
-        print(f"ERROR: invalid phase {args.precision}")
-        exit(1)
 
     ref = args.input is None
     if not ref:
