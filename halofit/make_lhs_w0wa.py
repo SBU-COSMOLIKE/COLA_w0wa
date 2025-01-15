@@ -38,7 +38,7 @@ lims_stretch['wa'] = [-0.76, 0.56]
 redshifts = np.linspace(3, 0, 10)
 
 # Note: Ref cosmology doesn't provide tau, using same as Guilherme
-def get_pk(h, Omega_b, Omega_c, As, ns, w0, wa, redshifts=[0], tau=0.078, nonlinear=True):
+def get_pk(h, Omega_b, Omega_c, As, ns, w0, wa, redshifts=[0], tau=0.078):
     '''
     Returns a list [k, Pk_lin, Pk_nl], the scales and power spectrum for the given cosmology.
     Uses 200 k-bins from k = 1e-2 to k = pi (h/Mpc).
