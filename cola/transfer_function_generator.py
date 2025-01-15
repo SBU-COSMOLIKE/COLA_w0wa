@@ -184,6 +184,7 @@ argp = argparse.ArgumentParser(
 )
 argp.add_argument("--path_to_save", help="Path to save the files", required=True)
 argp.add_argument("--input", help="File to read LHS. If not provided, calculates and saves the transfer functions for the EE2 reference cosmology.")
+argp.add_argument("--project", help="Whether to project the input cosmologies into the LambdaCDM subspace.", action="store_true")
 argp.add_argument("--start", help="LHS cosmology index to start generating.", type=int)
 argp.add_argument("--end", help="LHS cosmology index to end generating.", type=int)
 
@@ -196,23 +197,27 @@ if __name__ == "__main__":
     #     exit(1)
     print(f"Will save transfer function data in {args.path_to_save}")
     ref = args.input is None
-    if args.start is None: args.start = 0
     else: args.start
     if not ref:
         print(f"Reading LHS file in {args.input}")
+        if args.project: print("Projecting cosmologies into LambdaCDM subspace")
         lhs = np.loadtxt(args.input)
+        if args.start is None: args.start = 0
+        if args.end is None: args.end = len(lhs)
         for i, cosmo in enumerate(lhs):
-            # if i < args.start or i > args.end: 
-            #     print(f"Skipping cosmology {i}...")
-            #     print("-----")
-            #     continue
+            if i < args.start or i > args.end: 
+                print(f"Skipping cosmology {i}...")
+                print("-----")
+                continue
             print("-----")
             try:
                 h, Omega_b, Omega_m, As, ns, w, wa = cosmo
             except ValueError:
                 Omega_m, Omega_b, ns, As, h, w = cosmo
-                w0pwa = w
-            # wa = w0pwa - w
+                wa = 0
+            if args.project:
+                w = -1
+                wa = 0
             print(f'Running cosmology #{i}: Om={Omega_m}, Ob={Omega_b}, ns={ns}, As={As}, h={h}, w0={w}, wa={wa}')
             os.mkdir(f"{args.path_to_save}/{i}")
             start = time.perf_counter()
