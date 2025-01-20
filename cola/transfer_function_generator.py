@@ -197,7 +197,6 @@ if __name__ == "__main__":
     #     exit(1)
     print(f"Will save transfer function data in {args.path_to_save}")
     ref = args.input is None
-    else: args.start
     if not ref:
         print(f"Reading LHS file in {args.input}")
         if args.project: print("Projecting cosmologies into LambdaCDM subspace")
