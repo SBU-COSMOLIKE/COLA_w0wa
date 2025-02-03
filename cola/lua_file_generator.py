@@ -3,14 +3,18 @@ import argparse
 import numpy as np
 
 def write_lua_file(cosmo, ident, lua_out_path, transferinfo_path, output_path, pair_fix, phase, projected):
-    #-----------------------------------------------------------
-    # Where on the current computer to store the lua files this script writes
-    # lua_out_path = f'{path}/parameter_file{i}.lua' if not ref else f'{path}/parameter_fileref.lua'
-    # Where the transferinfo files will be read from on the cluster
-    # transferinfo_path = f'/gpfs/projects/MirandaGroup/victoria/cola_projects/test_5/transfers/{i}/transferinfo.dat'
-    # Where the output pk will be stored on the cluster
-    # output_path = f'/gpfs/projects/MirandaGroup/victoria/cola_projects/test_5/output/{args.phase}/{i}'
-    #------------------------------------------------------------
+    """
+        Description: function that writes a .lua file that serves as COLA-FML input.
+        Arguments:
+            cosmo: a list with cosmological parameters. Must have shape (N, 5), (N, 6) or (N, 7)
+            ident: a tag for the simulation
+            lua_out_path: where you want the lua file to be saved
+            transferinfo_path: the path for the transferinfo file in the cluster
+            output_path: the path where the simulations are going to be saved in the cluster
+            pair_fix: whether to fix amplitudes of the initial conditions
+            phase: if initial conditions have fixed amplitudes, choose which phase (normal "a" or reversed "b")
+            projected: whether to write the lua file for the LCDM projection of the cosmology `cosmo`
+    """
     dims = len(cosmo)
     if dims == 5:
         cola_model = "LCDM"
@@ -165,8 +169,9 @@ def write_lua_file(cosmo, ident, lua_out_path, transferinfo_path, output_path, p
     file.write('bispectrum_interlacing = true\n')
     file.write('bispectrum_subtract_shotnoise = false\n')
     file.write('bispectrum_density_assignment_method = "PCS"\n')
-
     file.close()
+
+# --- Main program ---
 
 argp = argparse.ArgumentParser(
     description="Generates lua input files for COLA simulations",
@@ -206,10 +211,6 @@ if __name__ == "__main__":
         lhs = np.array([[0.67, 0.049, 0.319, 2.1e-9, 0.96]])
     
     num_points, dims = lhs.shape
-    if dims == 5:
-        cola_model = "LCDM"
-    else:
-        cola_model = "w0waCDM"
     
     if args.technique == "pair-fix":
         for i, cosmo in enumerate(lhs):
