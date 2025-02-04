@@ -8,7 +8,7 @@ print("Setting up paths...")
 hardcoded_path = "/gpfs/projects/MirandaGroup/victoria/cola_projects/test_5"
 new_path = os.getcwd()
 
-lua_folders = [f"lua_files_{i}" for i in ["a", "b", "no_pairfix", "no_pairfix_projected"]]
+lua_folders = [f"lua_files_{i}" for i in ["a", "b", "no_pairfix", "no_pairfix_projected", "projected_a", "projected_b"]]
 for folder in lua_folders:
     for file in os.listdir(folder):
         with open(f"{folder}/{file}", "r") as f: contents = f.read()
