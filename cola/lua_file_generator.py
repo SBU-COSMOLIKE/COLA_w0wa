@@ -218,9 +218,9 @@ if __name__ == "__main__":
                 # Where on the current computer to store the lua files this script writes
                 lua_out_path = f'{args.path_to_save}/lua_files_{phase}/' if not ref else f'{args.path_to_save}/lua_files_{phase}/'
                 # Where the transferinfo files will be read from on the cluster
-                transferinfo_path = f'/gpfs/projects/MirandaGroup/victoria/cola_projects/test_5/transfers/{i}/transferinfo.dat'
+                transferinfo_path = f'%PLACEHOLDER%/transfers/{i}/transferinfo.dat'
                 # Where the output pk will be stored on the cluster
-                output_path = f'/gpfs/projects/MirandaGroup/victoria/cola_projects/test_5/output/{phase}/{i}'
+                output_path = f'%PLACEHOLDER%/output/{phase}/{i}'
                 write_lua_file(cosmo, i, lua_out_path, transferinfo_path, output_path, pair_fix=True, phase=phase, projected=False)
     elif args.technique == "project":
         for i, cosmo in enumerate(lhs):
@@ -228,7 +228,7 @@ if __name__ == "__main__":
                 # Where on the current computer to store the lua files this script writes
                 lua_out_path = f'{args.path_to_save}/lua_files_no_pairfix{"_projected" if projected else ""}/' if not ref else f'{args.path_to_save}/lua_files_no_pairfix{"_projected" if projected else ""}/'
                 # Where the transferinfo files will be read from on the cluster
-                transferinfo_path = f'/gpfs/projects/MirandaGroup/victoria/cola_projects/test_5/transfers{"_projected" if projected else ""}/{i}/transferinfo.dat'
+                transferinfo_path = f'%PLACEHOLDER%/transfers{"_projected" if projected else ""}/{i}/transferinfo.dat'
                 # Where the output pk will be stored on the cluster
-                output_path = f'/gpfs/projects/MirandaGroup/victoria/cola_projects/test_5/output/no_pairfix{"_projected" if projected else ""}/{i}'
+                output_path = f'%PLACEHOLDER%/output/no_pairfix{"_projected" if projected else ""}/{i}'
                 write_lua_file(cosmo, i, lua_out_path, transferinfo_path, output_path, pair_fix=False, phase="a", projected=projected)
