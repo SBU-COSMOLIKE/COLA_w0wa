@@ -171,7 +171,7 @@ def generate_transfers(Omega_m, Omega_b, h, As, ns, w, wa, path="./transfers/", 
                     header='          k/h    CDM            baryon         photon         nu             mass_nu        total          no_nu          total_de       Weyl           v_CDM          v_b            v_b-v_c')
     
     # Write transferinfo file
-    cluster_path = f"/gpfs/projects/MirandaGroup/victoria/cola_projects/test/w0waCDM/transfer_functions/{sim_number}/"
+    cluster_path = f"%PLACEHOLDER%/transfers/{sim_number}/"
     with open(f"{path}/transferinfo.dat", "w") as f:
         f.write(f"{cluster_path} 54\n")
         for i in reversed(range(len(zs_COLA))):
