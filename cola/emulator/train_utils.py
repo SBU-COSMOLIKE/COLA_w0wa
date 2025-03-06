@@ -23,8 +23,15 @@ import torch.nn.functional as F
 
 #------------------------------------------------------------------------------------------------------------
 # Parameter space
-params = ['h', 'Omegab', 'Omegam', 'As', 'ns', 'w', 'w0pwa']
-params_latex = [r'$h$', r'$\Omega_b$', r'$\Omega_m$', r'$A_s$', r'$n_s$', r'$w_0$', r'$w_0+w_a$']
+params = ['h', 'Omegab', 'Omegam', 'As', 'ns', 'w', 'wa']
+params_latex = [r'$h$', r'$\Omega_b$', r'$\Omega_m$', r'$A_s$', r'$n_s$', r'$w_0$', r'$w_a$']
+
+zs_cola = [
+    0.000, 0.020, 0.041, 0.062, 0.085, 0.109, 0.133, 0.159, 0.186, 0.214, 0.244, 0.275, 0.308, 
+    0.342, 0.378, 0.417, 0.457, 0.500, 0.543, 0.588, 0.636, 0.688, 0.742, 0.800, 0.862, 0.929, 
+    1.000, 1.087, 1.182, 1.286, 1.400, 1.526, 1.667, 1.824, 2.000, 2.158, 2.333, 2.529, 2.750, 
+    3.000
+]
 
 # Parameter limits for training, see Table 2 from https://arxiv.org/pdf/2010.11288
 lims = {}
@@ -34,8 +41,7 @@ lims['Omegam'] = [0.24, 0.4]
 lims['As'] = [1.7e-9, 2.5e-9]
 lims['ns'] = [0.92, 1]
 lims['w'] = [-1.3, -0.7]
-lims['w0pwa']  = [-2.0, 0.0]
-# lims['wa']  = [-0.7, 0.5]
+lims['wa']  = [-0.7, 0.5]
 
 # Reference values
 ref = {}
@@ -45,15 +51,12 @@ ref['Omegam'] = 0.319
 ref['As'] = 2.1e-9
 ref['ns'] = 0.96
 ref['w'] = -1
-ref['w0pwa'] = -1
-# ref['wa'] = 0
+ref['wa'] = 0
 params_ref = [ref[param] for param in params]
-
-redshifts = np.linspace(3, 0, 51)
 
 #------------------------------------------------------------------------------------------------------------
 
-def load_set(path):
+def load_set(path, z):
     lhs = np.loadtxt(f"{path}/lhs.txt")
     num_samples = len(lhs)
     
@@ -61,8 +64,8 @@ def load_set(path):
     pks_nl  = []
     for i in range(num_samples):
         # NOTE: skipping first k-bin
-        ks, pk_nl_a, pk_lin = np.loadtxt(f"{path}/output/a/{i}/pofk_run_{i}_cb_z0.000.txt", unpack=True, usecols=(0,1,2), skiprows=2)
-        ks, pk_nl_b, pk_lin = np.loadtxt(f"{path}/output/b/{i}/pofk_run_{i}_cb_z0.000.txt", unpack=True, usecols=(0,1,2), skiprows=2)
+        ks, pk_nl_a, pk_lin = np.loadtxt(f"{path}/output/a/{i}/pofk_run_{i}_cb_z{z:.3f}.txt", unpack=True, usecols=(0,1,2), skiprows=2)
+        ks, pk_nl_b, pk_lin = np.loadtxt(f"{path}/output/b/{i}/pofk_run_{i}_cb_z{z:.3f}.txt", unpack=True, usecols=(0,1,2), skiprows=2)
         pk_nl = 0.5*(pk_nl_a + pk_nl_b)
         pks_lin.append(pk_lin)
         pks_nl.append(pk_nl)
@@ -72,9 +75,10 @@ def load_set(path):
     return lhs, ks, pks_lin, pks_nl
 
 class HalofitSet:
-    def __init__(self, path):
+    def __init__(self, path, z):
         self.num_pcs = None
-        data = load_set(path)
+        self.z = z
+        data = load_set(path, z)
         self.lhs, self.ks, self.pks_lin, self.pks_nl = data
         self.boosts = self.pks_nl/self.pks_lin
         self.logboosts = np.log(self.boosts)
@@ -110,21 +114,21 @@ class HalofitSet:
     def plot_boosts(self):
         for boost in self.boosts:
             plt.semilogx(self.ks, boost)
-        plt.title(f"Halofit train boosts for z = 0")
+        plt.title(f"Halofit train boosts for z = {self.z:.3f}")
         plt.xlabel("k")
         plt.ylabel("Boost")
     
     def plot_logboosts(self):
         for boost in self.logboosts:
             plt.semilogx(self.ks, boost)
-        plt.title(f"Halofit train boosts for z = 0")
+        plt.title(f"Halofit train boosts for z = {self.z:.3f}")
         plt.xlabel("k")
         plt.ylabel("Log(Boost)")
 
     def plot_logboosts_norm(self):
         for boost in self.logboosts_norm:
             plt.semilogx(self.ks, boost)
-        plt.title(f"Halofit train boosts for z = 0")
+        plt.title(f"Halofit train boosts for z = {self.z:.3f}")
         plt.xlabel("k")
         plt.ylabel("Normalized Log(Boost)")
 
